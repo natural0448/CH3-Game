@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.py[cod]
+.env
+.env.*
+!.env.example
+env.macos.sh
+env.windows.ps1
+kafka-data/
+*.log
+**/data/
