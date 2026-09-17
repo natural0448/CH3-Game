@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+data.js
+data.js.tmp

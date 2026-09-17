@@ -107,6 +107,7 @@ class LoginAndPlayerViewTests(TestCase):
                 first = client.get(reverse("game:player"), {"player_id": other.pk})
                 second = client.get(reverse("game:player"))
                 expected = {
+                    "username": player.user.username,
                     "player_id": player.pk, "type": "state", "room_id": player.room_id,
                     "x": player.x, "y": player.y, "coins": player.coins, "version": player.version,
                 }

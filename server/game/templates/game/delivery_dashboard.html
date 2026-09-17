@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>서버 이벤트 · Kafka 전달 로그</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f5f4ee; color: #243b32; font-family: system-ui, "Malgun Gothic", sans-serif; line-height: 1.6; }
+    main { max-width: 1080px; margin: 48px auto; padding: 0 20px; }
+    header, .toolbar, .pagination { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    h1 { font-size: clamp(25px, 5vw, 34px); margin: 0; letter-spacing: -.04em; }
+    h2 { font-size: 19px; margin: 0; }
+    p { margin: 8px 0; }
+    .muted { color: #63746b; font-size: 14px; }
+    .eyebrow { color: #237254; font-weight: 650; font-size: 13px; letter-spacing: .06em; }
+    a { color: #206b50; text-underline-offset: 3px; }
+    .button { display: inline-block; border-radius: 10px; padding: 10px 18px; background: #206b50; color: white; text-decoration: none; font-weight: 650; }
+    a:focus-visible { outline: 3px solid #cb9444; outline-offset: 4px; }
+    .counts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 28px 0; }
+    .count { border: 1px solid #dce2d8; border-radius: 16px; padding: 22px; background: #fffefa; }
+    .count dt { font-size: 14px; color: #607169; }
+    .count dd { font-size: 38px; line-height: 1.3; margin: 8px 0 0; font-weight: 700; }
+    .pending dd { color: #98631a; }
+    .sent dd { color: #206b50; }
+    .panel { background: #fffefa; border: 1px solid #dce2d8; border-radius: 16px; overflow: hidden; }
+    .toolbar { padding: 20px; }
+    nav { display: flex; gap: 6px; flex-wrap: wrap; }
+    nav a { padding: 6px 13px; border-radius: 8px; text-decoration: none; }
+    nav a[aria-current="page"] { background: #e6efe7; font-weight: 700; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+    th { background: #f3f5ef; color: #657369; font-size: 12px; font-weight: 600; }
+    th, td { padding: 14px 20px; border-top: 1px solid #e4e8e0; vertical-align: top; }
+    time { white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .badge { display: inline-block; border-radius: 6px; padding: 3px 9px; white-space: nowrap; font-size: 12px; font-weight: 650; }
+    .badge.pending { background: #fff0d4; color: #805413; }
+    .badge.sent { background: #e4f0e7; color: #206b50; }
+    code { display: block; color: #708075; margin-top: 5px; font-size: 11px; overflow-wrap: anywhere; }
+    .empty { text-align: center; padding: 48px 20px; color: #63746b; }
+    .pagination { padding: 16px 20px; border-top: 1px solid #e4e8e0; font-size: 14px; }
+    footer { margin-top: 22px; }
+    @media (max-width: 600px) {
+      main { margin: 24px auto; padding: 0 12px; }
+      .counts { gap: 8px; margin: 22px 0; }
+      .count { padding: 14px 10px; }
+      .count dd { font-size: 30px; }
+      th, td { padding: 12px; }
+      table { min-width: 700px; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <p class="eyebrow">작은 마을 · 서버 전체 이벤트</p>
+      <h1>Kafka 전달 로그</h1>
+      <p class="muted">모든 사용자 · 모든 방 · {{ checked_at|date:"Y.m.d H:i:s" }} 조회</p>
+    </div>
+    <a class="button" href="?status={{ status }}">새로고침</a>
+  </header>
+
+  <dl class="counts">
+    <div class="count"><dt>DB에 저장된 이벤트</dt><dd>{{ counts.total }}</dd></div>
+    <div class="count pending"><dt>Kafka 전달 대기</dt><dd>{{ counts.pending }}</dd></div>
+    <div class="count sent"><dt>Kafka 전달 완료</dt><dd>{{ counts.sent }}</dd></div>
+  </dl>
+
+  <section class="panel" aria-labelledby="events-title">
+    <div class="toolbar">
+      <h2 id="events-title">서버 이벤트 로그</h2>
+      <nav aria-label="전달 상태 필터">
+        <a href="?status=all" {% if status == 'all' %}aria-current="page"{% endif %}>전체</a>
+        <a href="?status=pending" {% if status == 'pending' %}aria-current="page"{% endif %}>전달 대기</a>
+        <a href="?status=sent" {% if status == 'sent' %}aria-current="page"{% endif %}>전달 완료</a>
+      </nav>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th scope="col">Kafka 전달 상태</th><th scope="col">이벤트 / ID</th><th scope="col">Player / 방</th><th scope="col">발생 시각</th><th scope="col">Kafka 수신 확인 기록</th></tr></thead>
+        <tbody>
+        {% for event in page %}
+          <tr>
+            <td>{% if event.published_at %}<span class="badge sent">전달 완료</span>{% else %}<span class="badge pending">전달 대기</span>{% endif %}</td>
+            <td>{{ event.event_type }}<code>{{ event.event_id }}</code></td>
+            <td>#{{ event.player_id }}<br>{{ event.room_id }}</td>
+            <td><time datetime="{{ event.event_time|date:'c' }}">{{ event.event_time|date:"m.d H:i:s" }}</time></td>
+            <td>{% if event.published_at %}<time datetime="{{ event.published_at|date:'c' }}">{{ event.published_at|date:"m.d H:i:s" }}</time>{% else %}—{% endif %}</td>
+          </tr>
+        {% empty %}
+          <tr><td class="empty" colspan="5">{% if status == 'pending' %}전달 대기 중인 이벤트가 없습니다.{% elif status == 'sent' %}전달 완료된 이벤트가 없습니다.{% else %}아직 이벤트가 없습니다. 게임에서 이동하거나 채집하면 여기에 표시됩니다.{% endif %}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <span>{{ page.number }} / {{ page.paginator.num_pages }} 페이지 · 목록 {{ page.paginator.count }}건</span>
+      <div>{% if page.has_previous %}<a href="?status={{ status }}&amp;page={{ page.previous_page_number }}">이전</a>{% endif %}
+      {% if page.has_next %}<a href="?status={{ status }}&amp;page={{ page.next_page_number }}">다음</a>{% endif %}</div>
+    </div>
+  </section>
+  <footer class="muted">
+    <p>게임에서 확정된 이벤트는 DB의 GameEvent에 저장됩니다. publisher가 Kafka의 수신 확인을 받으면 published_at을 기록하고 전달 완료로 표시합니다.</p>
+    <p>대기는 Kafka 전달 확인이 DB에 아직 기록되지 않은 상태입니다. 이 화면은 DB의 전달 기록 기준이며 Kafka의 현재 보관 여부나 Spark 분석 완료를 조회하는 화면은 아닙니다.</p>
+    <p>source: mysql-outbox · 서버 전체 기준 · 자동 갱신 없음. 게임 행동이나 publisher 실행 후 새로고침하세요.</p>
+  </footer>
+</main>
+</body>
+</html>

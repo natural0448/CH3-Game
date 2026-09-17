@@ -9,3 +9,4 @@ env.windows.ps1
 kafka-data/
 *.log
 **/data/
+infra/runtime/

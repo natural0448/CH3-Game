@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-16T07:28:44.277682+00:00",
+  "source": "raw",
+  "record_count": 720,
+  "event_count": 720,
+  "by_action": [
+    {
+      "event_type": "player.gathered",
+      "count": 46
+    },
+    {
+      "event_type": "player.moved",
+      "count": 674
+    }
+  ],
+  "by_room": [
+    {
+      "room_id": "room-01",
+      "count": 657
+    },
+    {
+      "room_id": "room-02",
+      "count": 35
+    },
+    {
+      "room_id": "room-3",
+      "count": 28
+    }
+  ]
+}

@@ -102,6 +102,15 @@ USE_I18N = True
 USE_TZ = True
 DATA_DIR = PROJECT_DIR / "data"
 
+# Only the server's publisher/consumer connect to Kafka, never the GUI client.
+KAFKA_BOOTSTRAP_SERVERS = [
+    address.strip() for address in os.environ.get(
+        "KAFKA_BOOTSTRAP_SERVERS", "127.0.0.1:9092,127.0.0.1:9094,127.0.0.1:9096"
+    ).split(",") if address.strip()
+]
+KAFKA_EVENT_TOPIC = os.environ.get("KAFKA_EVENT_TOPIC", "game.events.v1")
+KAFKA_GROUP_ID = os.environ.get("KAFKA_GROUP_ID", "village-watch-v1")
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
@@ -120,3 +129,5 @@ CHANNEL_LAYERS = {
 LOGIN_URL = "/accounts/login/"
 LOGIN_REDIRECT_URL = "/play/"
 LOGOUT_REDIRECT_URL = "/accounts/login/"
+SPARK_SUBMIT = os.environ["SPARK_SUBMIT"]
+SPARK_MASTER = os.environ.get("SPARK_MASTER", "spark://127.0.0.1:7077")

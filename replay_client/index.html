@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>작은 마을 · 플레이 리플레이</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="data.js" defer></script><script src="engine.js" defer></script><script src="app.js" defer></script>
+</head>
+<body>
+<header class="top"><a class="brand" href="./" aria-label="리플레이 처음 화면"><span class="brand-icon">▦</span> 작은 마을 <span class="brand-sub">REPLAY</span></a><span class="file-badge" id="sourceBadge">로컬 기록 불러오는 중</span></header>
+<main>
+  <section class="intro"><div><p class="eyebrow">PLAYBACK ROOM</p><h1>우리 마을의 시간을 다시.</h1><p class="intro-note">저장된 행동 순서대로, 캐릭터의 움직임과 채집 순간을 돌아보세요.</p></div><div class="room-control"><label for="room">재생할 방</label><select id="room" disabled></select></div></section>
+  <div id="error" class="error" role="alert" hidden></div>
+  <div class="workspace">
+    <section class="theater" aria-label="게임 리플레이">
+      <div class="stage-head"><div><span class="room-dot"></span><strong id="roomTitle">마을</strong><span class="subtle" id="roomMeta"></span></div><span class="play-status" id="playStatus">준비</span></div>
+      <div class="stage"><canvas id="village" width="960" height="720" aria-label="20 × 15 마을의 기록된 캐릭터 위치"></canvas><div class="stage-overlay" id="startHint"><span class="big-play">▶</span><strong>다시 보고 싶은 순간, 여기서 시작하세요.</strong><span>재생 버튼을 누르면 첫 행동부터 보여 드려요.</span></div><div class="stage-clock"><span>기록 시각 · KST</span><time id="clock">—</time></div><div id="gapNotice" class="gap-notice" hidden></div></div>
+      <div class="transport">
+        <div class="timeline-label"><span id="eventPosition">0 / 0 행동</span><span id="timeSpan">—</span></div>
+        <input id="timeline" type="range" min="0" max="0" value="0" step="1" aria-label="행동 시점 이동" disabled>
+        <div class="transport-controls"><div class="secondary-controls"><button id="first" class="icon-button" title="처음으로" aria-label="처음으로">|◀</button><button id="prev" class="icon-button" title="이전 행동 · 왼쪽 방향키" aria-label="이전 행동">‹</button></div><button id="play" class="play-button" disabled><span id="playIcon">▶</span><span id="playText">재생</span></button><div class="secondary-controls"><button id="next" class="icon-button" title="다음 행동 · 오른쪽 방향키" aria-label="다음 행동">›</button><button id="last" class="icon-button" title="마지막으로" aria-label="마지막으로">▶|</button></div><label class="speed-label" for="speed">배속 <select id="speed"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option></select></label></div>
+        <div class="playback-options"><label><input type="checkbox" id="skipGaps" checked> 긴 대기 줄이기</label><label><input type="checkbox" id="trails" checked> 이동 흔적</label><span>Space 재생/정지 · ← → 한 행동씩</span></div>
+      </div>
+    </section>
+    <aside class="sidebar">
+      <section class="panel"><div class="panel-title"><h2>기록 속 캐릭터</h2><span id="playerCount"></span></div><p class="small-note">캐릭터를 선택하면 이동 경로가 강조됩니다.</p><div id="players" class="players"></div><button id="clearFocus" class="text-button" hidden>전체 캐릭터 보기</button></section>
+      <section class="panel moments"><div class="panel-title"><h2>지나온 순간</h2><span class="subtle">최근 행동</span></div><ol id="eventLog"></ol><p id="noMoments" class="empty-note">재생하면 이곳에 움직임이 기록됩니다.</p></section>
+      <section class="source-note"><span class="note-icon">↶</span><div><strong>그때의 기록을 재생합니다</strong><p>첫 기록 이전 위치와 접속·퇴장 정보는 알 수 없습니다. 캐릭터는 마지막으로 기록된 위치에 남습니다.</p></div></section>
+    </aside>
+  </div>
+  <footer><span id="sourceInfo"></span><span>원본 데이터 읽기 전용 · 서버에 행동을 보내지 않습니다.</span></footer>
+</main>
+</body></html>
