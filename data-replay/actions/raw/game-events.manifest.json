@@ -1,0 +1,24 @@
+{
+  "source": "kafka-retained-snapshot",
+  "topic": "game.actions.v1",
+  "record_count": 831,
+  "output": "C:\\MLO01-01\\Chapter3\\Game-server\\data-replay\\actions\\raw\\game-events.jsonl",
+  "group_committed": false,
+  "bounds": [
+    {
+      "partition": 0,
+      "start_inclusive": 0,
+      "end_exclusive": 535
+    },
+    {
+      "partition": 1,
+      "start_inclusive": 0,
+      "end_exclusive": 35
+    },
+    {
+      "partition": 2,
+      "start_inclusive": 0,
+      "end_exclusive": 261
+    }
+  ]
+}
