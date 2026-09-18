@@ -1,0 +1,8 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/server/.venv/Scripts/python.exe",
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/../Oder-insight/Spark-exam/spark-4.1.3-bin-hadoop3-1/python",
+    "${workspaceFolder}/../Oder-insight/Spark-exam/spark-4.1.3-bin-hadoop3-1/python/lib/py4j-0.10.9.9-src.zip"
+  ],
+  "python.terminal.activateEnvironment": true
+}
